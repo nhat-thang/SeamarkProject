@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 
 const EMPTY_CONFIRM_FORM = {
@@ -340,6 +341,7 @@ export default function StudentsPage() {
                       )}
                     </td>
                     <td className="row-actions">
+                      <Link className="btn-link" to={`/admin/students/${s.id}`}>Học phí/Điểm danh</Link>
                       <button className="btn-secondary" onClick={() => openEnrollForm(s.id)}>+ Ghi danh</button>
                     </td>
                   </tr>

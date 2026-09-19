@@ -10,9 +10,11 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
    ```
    rồi mở http://localhost:8000
 
-2. **(Tuỳ chọn) Dữ liệu demo để test nhanh:** chạy `supabase/seed_demo.sql` trong Supabase SQL Editor — tạo sẵn 3 khoá học, 3 giáo viên, 3 lớp học kèm lịch dạy, để có ngay dữ liệu ghi danh/điểm danh/thời khoá biểu mà không cần tạo tay.
+2. **Bắt buộc nếu đã tạo project Supabase trước ngày nâng cấp nhắn tin 2 chiều:** chạy file `supabase/migrations/002_messaging_conversations.sql` trong SQL Editor 1 lần — thay bảng nhắn tin cũ (gửi 1 chiều) bằng bảng hội thoại 2 chiều mới. Sau khi chạy, dữ liệu tin nhắn cũ (nếu có) sẽ mất — chấp nhận được vì đang ở giai đoạn demo.
 
-3. **Ứng dụng quản lý (admin) / học viên:**
+3. **(Tuỳ chọn) Dữ liệu demo để test nhanh:** chạy `supabase/seed_demo.sql` trong Supabase SQL Editor — tạo sẵn 3 khoá học, 3 giáo viên, 3 lớp học kèm lịch dạy, để có ngay dữ liệu ghi danh/điểm danh/thời khoá biểu mà không cần tạo tay.
+
+4. **Ứng dụng quản lý (admin) / học viên:**
    ```
    cd app
    npm run dev
@@ -37,7 +39,7 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 - [x] Học viên: giao diện xem thời khoá biểu cá nhân, tình trạng học phí, tài liệu/bài tập, điểm danh, hộp thư — tất cả đều đọc dữ liệu thật
 - [x] Admin: ghi nhận học phí (chuyển khoản/tiền mặt thủ công) + điểm danh, theo từng học viên (trang "Học phí/Điểm danh")
 - [x] Admin: đăng tài liệu/bài tập theo lớp (upload file lên Supabase Storage, học viên tải xuống bằng link có hạn dùng)
-- [x] Admin: nhắn tin tới học viên — chọn 1/nhiều/tất cả qua danh sách tick chọn, kèm text và/hoặc file/ảnh, xem số người đã đọc
+- [x] Nhắn tin 2 chiều kiểu Messenger: mỗi học viên có 1 luồng chat riêng với trung tâm, học viên trả lời được (text + ảnh/file). Admin có thêm nút "Soạn tin gửi nhiều học viên" để gửi 1 nội dung tới nhiều/tất cả học viên cùng lúc.
 
 **→ Toàn bộ chức năng cốt lõi trong bản kế hoạch backend ban đầu đã xong.** Phần còn lại là hoàn thiện trải nghiệm và triển khai thật.
 

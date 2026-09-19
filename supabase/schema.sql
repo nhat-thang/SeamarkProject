@@ -152,24 +152,27 @@ create table public.registration_requests (
 );
 
 -- ---------------------------------------------------------
--- 11. Nhắn tin: admin gửi tới 1 / nhiều / tất cả học viên
+-- 11. Nhắn tin — hội thoại 2 chiều kiểu Messenger, 1 luồng
+-- riêng giữa mỗi học viên và trung tâm (admin). Admin gửi cho
+-- nhiều học viên = gửi cùng nội dung vào nhiều luồng khác nhau.
 -- ---------------------------------------------------------
-create table public.messages (
+create table public.conversations (
   id uuid primary key default gen_random_uuid(),
-  sender_id uuid not null references public.profiles (id),
-  body text,
-  attachment_url text,
-  attachment_type text, -- 'image' | 'file' | null
+  student_id uuid not null unique references public.students (id) on delete cascade,
   created_at timestamptz not null default now()
 );
 
-create table public.message_recipients (
+create table public.conversation_messages (
   id uuid primary key default gen_random_uuid(),
-  message_id uuid not null references public.messages (id) on delete cascade,
-  student_id uuid not null references public.students (id) on delete cascade,
-  is_read boolean not null default false,
-  read_at timestamptz,
-  unique (message_id, student_id)
+  conversation_id uuid not null references public.conversations (id) on delete cascade,
+  sender_id uuid not null references public.profiles (id),
+  sender_role text not null check (sender_role in ('admin', 'student')),
+  body text,
+  attachment_url text,
+  attachment_type text, -- 'image' | 'file' | null
+  read_by_admin boolean not null default false,
+  read_by_student boolean not null default false,
+  created_at timestamptz not null default now()
 );
 
 -- =========================================================
@@ -188,8 +191,8 @@ alter table public.payments enable row level security;
 alter table public.attendance enable row level security;
 alter table public.materials enable row level security;
 alter table public.registration_requests enable row level security;
-alter table public.messages enable row level security;
-alter table public.message_recipients enable row level security;
+alter table public.conversations enable row level security;
+alter table public.conversation_messages enable row level security;
 
 -- profiles: xem hồ sơ của chính mình, admin xem tất cả
 create policy "profiles_select_own_or_admin" on public.profiles
@@ -266,27 +269,51 @@ create policy "registration_requests_admin_read_write" on public.registration_re
 create policy "registration_requests_admin_update" on public.registration_requests
   for update using (public.is_admin()) with check (public.is_admin());
 
--- messages: chỉ admin được gửi (insert); người nhận xem được tin mình nhận
-create policy "messages_admin_insert" on public.messages
-  for insert with check (public.is_admin());
-create policy "messages_select_admin_or_recipient" on public.messages
+-- conversations: học viên xem/tạo luồng của chính mình, admin toàn quyền
+create policy "conversations_select_own_or_admin" on public.conversations
+  for select using (student_id = auth.uid() or public.is_admin());
+create policy "conversations_insert_own_or_admin" on public.conversations
+  for insert with check (student_id = auth.uid() or public.is_admin());
+
+-- conversation_messages: cả 2 bên đọc được tin trong đúng luồng của mình;
+-- gửi tin phải đứng tên chính mình và đúng vai trò thật (không giả làm admin)
+create policy "conversation_messages_select_own_or_admin" on public.conversation_messages
   for select using (
     public.is_admin()
     or exists (
-      select 1 from public.message_recipients r
-      where r.message_id = messages.id and r.student_id = auth.uid()
+      select 1 from public.conversations c
+      where c.id = conversation_messages.conversation_id and c.student_id = auth.uid()
     )
   );
 
--- message_recipients: học viên xem dòng của chính mình (đánh dấu đã đọc),
--- admin toàn quyền (để chọn người nhận khi gửi)
-create policy "message_recipients_select_own_or_admin" on public.message_recipients
-  for select using (student_id = auth.uid() or public.is_admin());
-create policy "message_recipients_admin_insert" on public.message_recipients
-  for insert with check (public.is_admin());
-create policy "message_recipients_update_own_read_status" on public.message_recipients
-  for update using (student_id = auth.uid() or public.is_admin())
-  with check (student_id = auth.uid() or public.is_admin());
+create policy "conversation_messages_insert" on public.conversation_messages
+  for insert with check (
+    sender_id = auth.uid()
+    and sender_role = (case when public.is_admin() then 'admin' else 'student' end)
+    and (
+      public.is_admin()
+      or exists (
+        select 1 from public.conversations c
+        where c.id = conversation_messages.conversation_id and c.student_id = auth.uid()
+      )
+    )
+  );
+
+create policy "conversation_messages_update_read_status" on public.conversation_messages
+  for update using (
+    public.is_admin()
+    or exists (
+      select 1 from public.conversations c
+      where c.id = conversation_messages.conversation_id and c.student_id = auth.uid()
+    )
+  )
+  with check (
+    public.is_admin()
+    or exists (
+      select 1 from public.conversations c
+      where c.id = conversation_messages.conversation_id and c.student_id = auth.uid()
+    )
+  );
 
 -- =========================================================
 -- STORAGE — nơi lưu file đính kèm tin nhắn và tài liệu học tập
@@ -305,5 +332,6 @@ create policy "materials_bucket_admin_write" on storage.objects
 
 create policy "message_attachments_read_authenticated" on storage.objects
   for select using (bucket_id = 'message-attachments' and auth.uid() is not null);
-create policy "message_attachments_admin_write" on storage.objects
-  for insert with check (bucket_id = 'message-attachments' and public.is_admin());
+-- cả admin và học viên đều được đính kèm file khi nhắn tin qua lại
+create policy "message_attachments_authenticated_write" on storage.objects
+  for insert with check (bucket_id = 'message-attachments' and auth.uid() is not null);

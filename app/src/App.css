@@ -157,6 +157,122 @@ body {
 .summary-tile strong { font-size: 1.3rem; color: var(--navy); font-family: "Inter", sans-serif; }
 
 /* =========================================================
+   Nhắn tin kiểu Messenger
+   ========================================================= */
+
+.chat-shell {
+  display: flex;
+  height: calc(100vh - 140px);
+  min-height: 420px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.conversation-list {
+  width: 240px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+.conversation-list-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+}
+.conversation-list-item.active { background: var(--sea-tint); }
+.conversation-list-item strong { display: block; font-size: 0.9rem; }
+.conversation-list-item span {
+  display: block;
+  font-size: 0.78rem;
+  color: #6b7488;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.conversation-list-item .unread-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  margin-right: 6px;
+}
+
+.chat-thread {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.chat-thread-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--navy);
+}
+.chat-thread-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--sea-tint);
+}
+.chat-bubble {
+  max-width: 70%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+.chat-bubble.theirs {
+  align-self: flex-start;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 3px;
+}
+.chat-bubble.mine {
+  align-self: flex-end;
+  background: var(--navy);
+  color: var(--cream);
+  border-bottom-right-radius: 3px;
+}
+.chat-bubble time {
+  display: block;
+  font-size: 0.68rem;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+.chat-bubble a { color: inherit; text-decoration: underline; }
+
+.chat-thread-input {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  align-items: center;
+}
+.chat-thread-input input[type="text"] {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.88rem;
+}
+.chat-thread-input input[type="file"] { max-width: 120px; font-size: 0.75rem; }
+
+/* =========================================================
    Admin layout (sidebar + content)
    ========================================================= */
 

@@ -36,9 +36,14 @@ export default function StudentDashboard() {
   const [payments, setPayments] = useState([]);
   const [materials, setMaterials] = useState([]);
   const [attendance, setAttendance] = useState([]);
+  const [conversationId, setConversationId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const [replyText, setReplyText] = useState("");
+  const [replyFile, setReplyFile] = useState(null);
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (profile?.id) loadAll(profile.id);
@@ -61,7 +66,7 @@ export default function StudentDashboard() {
 
     const classSectionIds = (enrollments || []).map((e) => e.class_section_id);
 
-    const [scheduleRes, paymentsRes, materialsRes, attendanceRes, messagesRes] = await Promise.all([
+    const [scheduleRes, paymentsRes, materialsRes, attendanceRes, conversationRes] = await Promise.all([
       classSectionIds.length
         ? supabase
             .from("schedule_slots")
@@ -86,10 +91,10 @@ export default function StudentDashboard() {
         .eq("student_id", studentId)
         .order("session_date", { ascending: false }),
       supabase
-        .from("message_recipients")
-        .select("*, messages(body, attachment_url, attachment_type, created_at)")
+        .from("conversations")
+        .select("id, conversation_messages(id, body, sender_role, attachment_url, attachment_type, read_by_student, created_at)")
         .eq("student_id", studentId)
-        .order("created_at", { foreignTable: "messages", ascending: false }),
+        .maybeSingle(),
     ]);
 
     if (scheduleRes.error) setError(scheduleRes.error.message);
@@ -100,10 +105,71 @@ export default function StudentDashboard() {
     else setMaterials(materialsRes.data);
     if (attendanceRes.error) setError(attendanceRes.error.message);
     else setAttendance(attendanceRes.data);
-    if (messagesRes.error) setError(messagesRes.error.message);
-    else setMessages(messagesRes.data);
+    if (conversationRes.error) setError(conversationRes.error.message);
+    else {
+      setConversationId(conversationRes.data?.id || null);
+      const msgs = (conversationRes.data?.conversation_messages || [])
+        .slice()
+        .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      setMessages(msgs);
+    }
 
     setLoading(false);
+  }
+
+  async function markThreadRead() {
+    const unreadIds = messages.filter((m) => m.sender_role === "admin" && !m.read_by_student).map((m) => m.id);
+    if (unreadIds.length === 0) return;
+    await supabase.from("conversation_messages").update({ read_by_student: true }).in("id", unreadIds);
+    setMessages((prev) => prev.map((m) => (unreadIds.includes(m.id) ? { ...m, read_by_student: true } : m)));
+  }
+
+  async function handleReplySubmit(e) {
+    e.preventDefault();
+    if (!replyText.trim() && !replyFile) return;
+    setError("");
+    setSending(true);
+    try {
+      let convId = conversationId;
+      if (!convId) {
+        const { data, error: convError } = await supabase
+          .from("conversations")
+          .insert({ student_id: profile.id })
+          .select()
+          .single();
+        if (convError) throw convError;
+        convId = data.id;
+        setConversationId(convId);
+      }
+
+      let attachment_url = null;
+      let attachment_type = null;
+      if (replyFile) {
+        const path = `${Date.now()}_${replyFile.name}`;
+        const { error: uploadError } = await supabase.storage.from("message-attachments").upload(path, replyFile);
+        if (uploadError) throw uploadError;
+        attachment_url = path;
+        attachment_type = replyFile.type.startsWith("image/") ? "image" : "file";
+      }
+
+      const { error: insertError } = await supabase.from("conversation_messages").insert({
+        conversation_id: convId,
+        sender_id: profile.id,
+        sender_role: "student",
+        body: replyText.trim() || null,
+        attachment_url,
+        attachment_type,
+        read_by_student: true,
+      });
+      if (insertError) throw insertError;
+
+      setReplyText("");
+      setReplyFile(null);
+      loadAll(profile.id);
+    } catch (err) {
+      setError(err.message);
+    }
+    setSending(false);
   }
 
   async function handleDownloadMaterial(path) {
@@ -124,19 +190,8 @@ export default function StudentDashboard() {
     window.open(data.signedUrl, "_blank");
   }
 
-  async function markMessageRead(recipientRow) {
-    if (recipientRow.is_read) return;
-    await supabase
-      .from("message_recipients")
-      .update({ is_read: true, read_at: new Date().toISOString() })
-      .eq("id", recipientRow.id);
-    setMessages((prev) =>
-      prev.map((m) => (m.id === recipientRow.id ? { ...m, is_read: true } : m))
-    );
-  }
-
   const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
-  const unreadCount = messages.filter((m) => !m.is_read).length;
+  const unreadCount = messages.filter((m) => m.sender_role === "admin" && !m.read_by_student).length;
 
   return (
     <div className="dashboard-screen">
@@ -156,7 +211,10 @@ export default function StudentDashboard() {
             <button
               key={t.key}
               className={activeTab === t.key ? "active" : ""}
-              onClick={() => setActiveTab(t.key)}
+              onClick={() => {
+                setActiveTab(t.key);
+                if (t.key === "messages") markThreadRead();
+              }}
             >
               {t.label}
               {t.key === "messages" && unreadCount > 0 ? ` (${unreadCount})` : ""}
@@ -255,35 +313,39 @@ export default function StudentDashboard() {
             )}
 
             {activeTab === "messages" && (
-              <div>
-                {messages.length === 0 ? (
-                  <p className="empty-note">Chưa có tin nhắn nào từ trung tâm.</p>
-                ) : (
-                  messages.map((m) => (
-                    <div
-                      className={`info-card ${m.is_read ? "" : "unread"}`}
-                      key={m.id}
-                      onClick={() => markMessageRead(m)}
-                    >
-                      {m.messages?.body && <strong>{m.messages.body}</strong>}
-                      {m.messages?.attachment_url && (
-                        <button
-                          className="btn-link"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDownloadAttachment(m.messages.attachment_url);
-                          }}
-                        >
-                          Xem đính kèm ({m.messages.attachment_type === "image" ? "ảnh" : "file"})
-                        </button>
-                      )}
-                      <span>
-                        {new Date(m.messages?.created_at).toLocaleString("vi-VN")}
-                        {!m.is_read ? " · Chưa đọc" : ""}
-                      </span>
-                    </div>
-                  ))
-                )}
+              <div className="chat-shell" style={{ height: 480 }}>
+                <div className="chat-thread">
+                  <div className="chat-thread-header">Tin nhắn với Anh ngữ Seamark</div>
+                  <div className="chat-thread-messages">
+                    {messages.length === 0 ? (
+                      <p className="empty-note">Chưa có tin nhắn nào — gửi tin đầu tiên bên dưới.</p>
+                    ) : (
+                      messages.map((m) => (
+                        <div className={`chat-bubble ${m.sender_role === "student" ? "mine" : "theirs"}`} key={m.id}>
+                          {m.body}
+                          {m.attachment_url && (
+                            <div>
+                              <a onClick={(e) => { e.preventDefault(); handleDownloadAttachment(m.attachment_url); }} href="#">
+                                Xem đính kèm ({m.attachment_type === "image" ? "ảnh" : "file"})
+                              </a>
+                            </div>
+                          )}
+                          <time>{new Date(m.created_at).toLocaleString("vi-VN")}</time>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  <form className="chat-thread-input" onSubmit={handleReplySubmit}>
+                    <input
+                      type="text"
+                      placeholder="Nhập tin nhắn..."
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                    />
+                    <input type="file" onChange={(e) => setReplyFile(e.target.files[0] || null)} />
+                    <button className="btn-primary" type="submit" disabled={sending}>Gửi</button>
+                  </form>
+                </div>
               </div>
             )}
           </>

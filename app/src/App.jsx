@@ -12,6 +12,7 @@ import TeacherSchedulePage from "./pages/admin/TeacherSchedulePage";
 import CoursesPage from "./pages/admin/CoursesPage";
 import ClassSectionsPage from "./pages/admin/ClassSectionsPage";
 import MaterialsPage from "./pages/admin/MaterialsPage";
+import MessagesPage from "./pages/admin/MessagesPage";
 import "./App.css";
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="courses" element={<CoursesPage />} />
             <Route path="classes" element={<ClassSectionsPage />} />
             <Route path="materials" element={<MaterialsPage />} />
+            <Route path="messages" element={<MessagesPage />} />
           </Route>
           <Route
             path="/student"

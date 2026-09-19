@@ -33,16 +33,18 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 - [x] Admin: quản lý Lớp học, gắn với khoá học (thêm/sửa/xoá)
 - [x] Admin: thời khoá biểu theo tuần cho từng giáo viên — thêm buổi dạy (chọn lớp, giờ, phòng), tự động cảnh báo nếu trùng giờ
 - [x] Admin: danh sách đăng ký tư vấn (chờ xác nhận) → xác nhận → tự tạo tài khoản học viên qua Supabase Edge Function (`create-student-account`), có nút thêm học viên thủ công (khách đăng ký ngoài đời/qua điện thoại)
+- [x] Admin: ghi danh học viên vào lớp học cụ thể (trong trang Học viên, cột "Lớp đang học")
+- [x] Học viên: giao diện xem thời khoá biểu cá nhân, tình trạng học phí, tài liệu/bài tập, điểm danh, hộp thư — tất cả đều đọc dữ liệu thật
+- [x] Admin: ghi nhận học phí (chuyển khoản/tiền mặt thủ công) + điểm danh, theo từng học viên (trang "Học phí/Điểm danh")
+- [x] Admin: đăng tài liệu/bài tập theo lớp (upload file lên Supabase Storage, học viên tải xuống bằng link có hạn dùng)
+- [x] Admin: nhắn tin tới học viên — chọn 1/nhiều/tất cả qua danh sách tick chọn, kèm text và/hoặc file/ảnh, xem số người đã đọc
+
+**→ Toàn bộ chức năng cốt lõi trong bản kế hoạch backend ban đầu đã xong.** Phần còn lại là hoàn thiện trải nghiệm và triển khai thật.
 
 ## Đang làm / sắp tới
 
 - [ ] Các trang tĩnh còn lại của site công khai: Khoá học, Đội ngũ giáo viên, Học phí, Đánh giá, FAQ, Liên hệ, Đăng nhập (nav đang trỏ tới nhưng các file này chưa được tạo)
-- [x] Admin: ghi danh học viên vào lớp học cụ thể (trong trang Học viên, cột "Lớp đang học")
 - [ ] "Quên mật khẩu" / admin cấp lại mật khẩu cho học viên
-- [x] Học viên: giao diện xem thời khoá biểu cá nhân (có dữ liệu thật), tình trạng học phí, tài liệu/bài tập, điểm danh, hộp thư (4 mục sau đang trống vì admin chưa có chỗ nhập — xem 3 mục tiếp theo)
-- [x] Admin: ghi nhận học phí (chuyển khoản/tiền mặt thủ công) + điểm danh, theo từng học viên (trang "Học phí/Điểm danh" trong danh sách học viên)
-- [x] Admin: đăng tài liệu/bài tập theo lớp (upload file lên Supabase Storage, học viên tải xuống bằng link có hạn dùng)
-- [ ] Admin: nhắn tin tới học viên — chọn 1 người / nhiều người / tất cả, gửi kèm text, file hoặc ảnh
 - [ ] Nối trang công khai và app quản lý lại thành 1 trải nghiệm liền mạch (nút "Đăng nhập" trỏ đúng sang app)
 - [ ] Triển khai demo: trang công khai lên Netlify, backend/app quản lý lên Render hoặc Railway khi cần
 - [ ] Mua domain thật (.vn hoặc .com) khi ra mắt chính thức

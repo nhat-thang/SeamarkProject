@@ -115,6 +115,15 @@ export default function StudentDashboard() {
     window.open(data.signedUrl, "_blank");
   }
 
+  async function handleDownloadAttachment(path) {
+    const { data, error: signError } = await supabase.storage.from("message-attachments").createSignedUrl(path, 3600);
+    if (signError) {
+      setError(signError.message);
+      return;
+    }
+    window.open(data.signedUrl, "_blank");
+  }
+
   async function markMessageRead(recipientRow) {
     if (recipientRow.is_read) return;
     await supabase
@@ -256,16 +265,17 @@ export default function StudentDashboard() {
                       key={m.id}
                       onClick={() => markMessageRead(m)}
                     >
-                      <strong>{m.messages?.body}</strong>
+                      {m.messages?.body && <strong>{m.messages.body}</strong>}
                       {m.messages?.attachment_url && (
-                        <a
+                        <button
                           className="btn-link"
-                          href={m.messages.attachment_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownloadAttachment(m.messages.attachment_url);
+                          }}
                         >
-                          Xem đính kèm
-                        </a>
+                          Xem đính kèm ({m.messages.attachment_type === "image" ? "ảnh" : "file"})
+                        </button>
                       )}
                       <span>
                         {new Date(m.messages?.created_at).toLocaleString("vi-VN")}

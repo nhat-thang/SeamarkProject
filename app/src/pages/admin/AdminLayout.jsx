@@ -23,6 +23,7 @@ export default function AdminLayout() {
           <NavLink to="/admin/classes">Lớp học</NavLink>
           <NavLink to="/admin/materials">Tài liệu</NavLink>
           <NavLink to="/admin/messages">Nhắn tin</NavLink>
+          <NavLink to="/admin/account">Tài khoản</NavLink>
         </nav>
 
         <div className="admin-content">

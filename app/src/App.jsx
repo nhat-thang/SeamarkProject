@@ -11,6 +11,7 @@ import TeachersPage from "./pages/admin/TeachersPage";
 import TeacherSchedulePage from "./pages/admin/TeacherSchedulePage";
 import CoursesPage from "./pages/admin/CoursesPage";
 import ClassSectionsPage from "./pages/admin/ClassSectionsPage";
+import MaterialsPage from "./pages/admin/MaterialsPage";
 import "./App.css";
 
 export default function App() {
@@ -35,6 +36,7 @@ export default function App() {
             <Route path="teachers/:teacherId" element={<TeacherSchedulePage />} />
             <Route path="courses" element={<CoursesPage />} />
             <Route path="classes" element={<ClassSectionsPage />} />
+            <Route path="materials" element={<MaterialsPage />} />
           </Route>
           <Route
             path="/student"

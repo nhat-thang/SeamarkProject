@@ -10,7 +10,9 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
    ```
    rồi mở http://localhost:8000
 
-2. **Ứng dụng quản lý (admin) / học viên:**
+2. **(Tuỳ chọn) Dữ liệu demo để test nhanh:** chạy `supabase/seed_demo.sql` trong Supabase SQL Editor — tạo sẵn 3 khoá học, 3 giáo viên, 3 lớp học kèm lịch dạy, để có ngay dữ liệu ghi danh/điểm danh/thời khoá biểu mà không cần tạo tay.
+
+3. **Ứng dụng quản lý (admin) / học viên:**
    ```
    cd app
    npm run dev
@@ -39,7 +41,7 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 - [ ] "Quên mật khẩu" / admin cấp lại mật khẩu cho học viên
 - [x] Học viên: giao diện xem thời khoá biểu cá nhân (có dữ liệu thật), tình trạng học phí, tài liệu/bài tập, điểm danh, hộp thư (4 mục sau đang trống vì admin chưa có chỗ nhập — xem 3 mục tiếp theo)
 - [x] Admin: ghi nhận học phí (chuyển khoản/tiền mặt thủ công) + điểm danh, theo từng học viên (trang "Học phí/Điểm danh" trong danh sách học viên)
-- [ ] Admin: đăng tài liệu/bài tập theo lớp
+- [x] Admin: đăng tài liệu/bài tập theo lớp (upload file lên Supabase Storage, học viên tải xuống bằng link có hạn dùng)
 - [ ] Admin: nhắn tin tới học viên — chọn 1 người / nhiều người / tất cả, gửi kèm text, file hoặc ảnh
 - [ ] Nối trang công khai và app quản lý lại thành 1 trải nghiệm liền mạch (nút "Đăng nhập" trỏ đúng sang app)
 - [ ] Triển khai demo: trang công khai lên Netlify, backend/app quản lý lên Render hoặc Railway khi cần

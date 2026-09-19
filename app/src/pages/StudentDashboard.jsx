@@ -106,6 +106,15 @@ export default function StudentDashboard() {
     setLoading(false);
   }
 
+  async function handleDownloadMaterial(path) {
+    const { data, error: signError } = await supabase.storage.from("materials").createSignedUrl(path, 3600);
+    if (signError) {
+      setError(signError.message);
+      return;
+    }
+    window.open(data.signedUrl, "_blank");
+  }
+
   async function markMessageRead(recipientRow) {
     if (recipientRow.is_read) return;
     await supabase
@@ -210,9 +219,9 @@ export default function StudentDashboard() {
                     <div className="info-card" key={m.id}>
                       <strong>{m.title}</strong>
                       <span>Lớp: {m.class_sections?.name}</span>
-                      <a className="btn-link" href={m.file_url} target="_blank" rel="noopener noreferrer">
+                      <button className="btn-link" onClick={() => handleDownloadMaterial(m.file_url)}>
                         Tải xuống
-                      </a>
+                      </button>
                     </div>
                   ))
                 )}

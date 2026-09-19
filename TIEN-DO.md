@@ -45,6 +45,7 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 
 - [x] Tự đổi mật khẩu (cả admin và học viên) trong tab "Tài khoản"/"Tổng quan"
 - [x] Admin cấp lại mật khẩu học viên khi quên hẳn (Edge Function `reset-student-password`, mật khẩu mới hiện 1 lần cho admin gửi lại)
+- [x] Tự đổi tên hiển thị (cả admin và học viên) trong trang/tab "Tài khoản" — có vá lỗ hổng RLS: chặn tự đổi cột `role` để không ai tự nâng quyền thành admin
 
 - [x] 7 trang tĩnh còn lại của site công khai: `khoa-hoc.html` (chi tiết 4 khoá), `giao-vien.html` (6 giáo viên demo), `hoc-phi.html` (bảng giá), `danh-gia.html` (6 đánh giá), `faq.html` (accordion 9 câu hỏi), `lien-he.html`, `dang-nhap.html`
 - [x] `lien-he.html` **đã nối thật với Supabase**: form đăng ký tư vấn ghi thẳng vào bảng `registration_requests` mà admin đang xem trong app — không cần đăng nhập (dùng `@supabase/supabase-js` qua CDN + anon key, không qua React app)

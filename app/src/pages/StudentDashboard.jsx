@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../lib/AuthContext";
 import { supabase } from "../lib/supabaseClient";
 import ChangePasswordForm from "../components/ChangePasswordForm";
+import UpdateNameForm from "../components/UpdateNameForm";
 
 const DAYS = [
   { value: 1, label: "Thứ 2" },
@@ -353,6 +354,9 @@ export default function StudentDashboard() {
 
             {activeTab === "account" && (
               <div>
+                <h2 style={{ fontSize: "1.05rem", color: "var(--navy)" }}>Tên hiển thị</h2>
+                <UpdateNameForm />
+
                 <h2 style={{ fontSize: "1.05rem", color: "var(--navy)" }}>Đổi mật khẩu</h2>
                 <ChangePasswordForm />
               </div>

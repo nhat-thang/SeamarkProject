@@ -199,6 +199,28 @@ create policy "profiles_select_own_or_admin" on public.profiles
   for select using (id = auth.uid() or public.is_admin());
 create policy "profiles_admin_write" on public.profiles
   for all using (public.is_admin()) with check (public.is_admin());
+-- tự sửa hồ sơ của chính mình (tên, sđt) — cột role được khoá riêng bằng trigger bên dưới
+create policy "profiles_update_own" on public.profiles
+  for update using (id = auth.uid()) with check (id = auth.uid());
+
+-- chặn tự đổi role (tránh học viên tự nâng quyền thành admin)
+create or replace function public.prevent_role_change()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.role is distinct from old.role and not public.is_admin() then
+    raise exception 'Không được tự đổi vai trò tài khoản';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger trg_prevent_role_change
+  before update on public.profiles
+  for each row execute function public.prevent_role_change();
 
 -- students: học viên xem chính mình, admin toàn quyền
 create policy "students_select_own_or_admin" on public.students

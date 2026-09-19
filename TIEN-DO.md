@@ -35,7 +35,7 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 ## Đang làm / sắp tới
 
 - [ ] Các trang tĩnh còn lại của site công khai: Khoá học, Đội ngũ giáo viên, Học phí, Đánh giá, FAQ, Liên hệ, Đăng nhập (nav đang trỏ tới nhưng các file này chưa được tạo)
-- [ ] Admin: ghi danh học viên vào lớp học cụ thể (bảng `enrollments`) — cần làm trước để tài liệu/điểm danh/lịch cá nhân của học viên hiển thị đúng
+- [x] Admin: ghi danh học viên vào lớp học cụ thể (trong trang Học viên, cột "Lớp đang học")
 - [ ] "Quên mật khẩu" / admin cấp lại mật khẩu cho học viên
 - [ ] Admin: nhắn tin tới học viên — chọn 1 người / nhiều người / tất cả, gửi kèm text, file hoặc ảnh
 - [ ] Admin: ghi nhận học phí (chuyển khoản/tiền mặt thủ công) + điểm danh

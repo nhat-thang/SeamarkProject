@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 
 const EMPTY_CONFIRM_FORM = {
@@ -14,6 +14,8 @@ const EMPTY_CONFIRM_FORM = {
 export default function StudentsPage() {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [students, setStudents] = useState([]);
+  const [classSections, setClassSections] = useState([]);
+  const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -24,13 +26,18 @@ export default function StudentsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [createdAccount, setCreatedAccount] = useState(null); // { email, password }
 
+  const [enrollingStudentId, setEnrollingStudentId] = useState(null);
+  const [enrollClassId, setEnrollClassId] = useState("");
+  const [enrollError, setEnrollError] = useState("");
+  const [enrollSubmitting, setEnrollSubmitting] = useState(false);
+
   useEffect(() => {
     loadAll();
   }, []);
 
   async function loadAll() {
     setLoading(true);
-    const [requestsRes, studentsRes] = await Promise.all([
+    const [requestsRes, studentsRes, classSectionsRes, enrollmentsRes] = await Promise.all([
       supabase
         .from("registration_requests")
         .select("*")
@@ -40,12 +47,64 @@ export default function StudentsPage() {
         .from("students")
         .select("*, profiles(full_name, phone)")
         .order("created_at", { ascending: false }),
+      supabase.from("class_sections").select("id, name").order("name"),
+      supabase
+        .from("enrollments")
+        .select("*, class_sections(name)")
+        .eq("status", "active"),
     ]);
     if (requestsRes.error) setError(requestsRes.error.message);
     else setPendingRequests(requestsRes.data);
     if (studentsRes.error) setError(studentsRes.error.message);
     else setStudents(studentsRes.data);
+    if (classSectionsRes.error) setError(classSectionsRes.error.message);
+    else setClassSections(classSectionsRes.data);
+    if (enrollmentsRes.error) setError(enrollmentsRes.error.message);
+    else setEnrollments(enrollmentsRes.data);
     setLoading(false);
+  }
+
+  function openEnrollForm(studentId) {
+    setEnrollingStudentId(studentId);
+    setEnrollClassId("");
+    setEnrollError("");
+  }
+
+  function closeEnrollForm() {
+    setEnrollingStudentId(null);
+    setEnrollError("");
+  }
+
+  async function handleEnrollSubmit(e, studentId) {
+    e.preventDefault();
+    if (!enrollClassId) {
+      setEnrollError("Vui lòng chọn lớp học.");
+      return;
+    }
+    setEnrollError("");
+    setEnrollSubmitting(true);
+    const { error: enrollErr } = await supabase
+      .from("enrollments")
+      .insert({ student_id: studentId, class_section_id: enrollClassId });
+    setEnrollSubmitting(false);
+
+    if (enrollErr) {
+      setEnrollError(
+        enrollErr.code === "23505"
+          ? "Học viên đã ghi danh lớp này rồi."
+          : enrollErr.message
+      );
+      return;
+    }
+    closeEnrollForm();
+    loadAll();
+  }
+
+  async function handleUnenroll(enrollment) {
+    if (!confirm(`Bỏ ghi danh khỏi lớp "${enrollment.class_sections?.name}"?`)) return;
+    const { error: deleteError } = await supabase.from("enrollments").delete().eq("id", enrollment.id);
+    if (deleteError) setError(deleteError.message);
+    else loadAll();
   }
 
   function openConfirmForm(request) {
@@ -254,19 +313,60 @@ export default function StudentsPage() {
               <th>SĐT</th>
               <th>Phụ huynh</th>
               <th>Cơ sở</th>
-              <th>Trạng thái</th>
+              <th>Lớp đang học</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            {students.map((s) => (
-              <tr key={s.id}>
-                <td>{s.profiles?.full_name || "—"}</td>
-                <td>{s.profiles?.phone || "—"}</td>
-                <td>{s.parent_name || "—"}</td>
-                <td>{s.campus || "—"}</td>
-                <td>{s.status}</td>
-              </tr>
-            ))}
+            {students.map((s) => {
+              const studentEnrollments = enrollments.filter((e) => e.student_id === s.id);
+              return (
+                <Fragment key={s.id}>
+                  <tr>
+                    <td>{s.profiles?.full_name || "—"}</td>
+                    <td>{s.profiles?.phone || "—"}</td>
+                    <td>{s.parent_name || "—"}</td>
+                    <td>{s.campus || "—"}</td>
+                    <td>
+                      {studentEnrollments.length === 0 ? (
+                        "Chưa ghi danh"
+                      ) : (
+                        studentEnrollments.map((e) => (
+                          <div key={e.id}>
+                            {e.class_sections?.name || "(lớp đã bị xoá)"}{" "}
+                            <button className="btn-link" onClick={() => handleUnenroll(e)}>xoá</button>
+                          </div>
+                        ))
+                      )}
+                    </td>
+                    <td className="row-actions">
+                      <button className="btn-secondary" onClick={() => openEnrollForm(s.id)}>+ Ghi danh</button>
+                    </td>
+                  </tr>
+                  {enrollingStudentId === s.id && (
+                    <tr>
+                      <td colSpan={6}>
+                        <form
+                          className="inline-slot-form"
+                          style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap" }}
+                          onSubmit={(e) => handleEnrollSubmit(e, s.id)}
+                        >
+                          <select value={enrollClassId} onChange={(e) => setEnrollClassId(e.target.value)}>
+                            <option value="">— Chọn lớp học —</option>
+                            {classSections.map((cs) => (
+                              <option key={cs.id} value={cs.id}>{cs.name}</option>
+                            ))}
+                          </select>
+                          <button className="btn-primary" type="submit" disabled={enrollSubmitting}>Lưu</button>
+                          <button className="btn-secondary" type="button" onClick={closeEnrollForm}>Huỷ</button>
+                          {enrollError && <p className="field-error" style={{ margin: 0 }}>{enrollError}</p>}
+                        </form>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
           </tbody>
         </table>
       )}

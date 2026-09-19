@@ -46,10 +46,12 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 - [x] Tự đổi mật khẩu (cả admin và học viên) trong tab "Tài khoản"/"Tổng quan"
 - [x] Admin cấp lại mật khẩu học viên khi quên hẳn (Edge Function `reset-student-password`, mật khẩu mới hiện 1 lần cho admin gửi lại)
 
+- [x] 7 trang tĩnh còn lại của site công khai: `khoa-hoc.html` (chi tiết 4 khoá), `giao-vien.html` (6 giáo viên demo), `hoc-phi.html` (bảng giá), `danh-gia.html` (6 đánh giá), `faq.html` (accordion 9 câu hỏi), `lien-he.html`, `dang-nhap.html`
+- [x] `lien-he.html` **đã nối thật với Supabase**: form đăng ký tư vấn ghi thẳng vào bảng `registration_requests` mà admin đang xem trong app — không cần đăng nhập (dùng `@supabase/supabase-js` qua CDN + anon key, không qua React app)
+
 ## Đang làm / sắp tới
 
-- [ ] Các trang tĩnh còn lại của site công khai: Khoá học, Đội ngũ giáo viên, Học phí, Đánh giá, FAQ, Liên hệ, Đăng nhập (nav đang trỏ tới nhưng các file này chưa được tạo)
-- [ ] Nối trang công khai và app quản lý lại thành 1 trải nghiệm liền mạch (nút "Đăng nhập" trỏ đúng sang app)
+- [ ] Nối trang công khai và app quản lý lại thành 1 trải nghiệm liền mạch — hiện `dang-nhap.html` đang trỏ tạm sang `http://localhost:5173` (ghi rõ trong file, cần đổi khi có domain thật)
 - [ ] Triển khai demo: trang công khai lên Netlify, backend/app quản lý lên Render hoặc Railway khi cần
 - [ ] Mua domain thật (.vn hoặc .com) khi ra mắt chính thức
 

@@ -43,10 +43,12 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 
 **→ Toàn bộ chức năng cốt lõi trong bản kế hoạch backend ban đầu đã xong.** Phần còn lại là hoàn thiện trải nghiệm và triển khai thật.
 
+- [x] Tự đổi mật khẩu (cả admin và học viên) trong tab "Tài khoản"/"Tổng quan"
+- [x] Admin cấp lại mật khẩu học viên khi quên hẳn (Edge Function `reset-student-password`, mật khẩu mới hiện 1 lần cho admin gửi lại)
+
 ## Đang làm / sắp tới
 
 - [ ] Các trang tĩnh còn lại của site công khai: Khoá học, Đội ngũ giáo viên, Học phí, Đánh giá, FAQ, Liên hệ, Đăng nhập (nav đang trỏ tới nhưng các file này chưa được tạo)
-- [ ] "Quên mật khẩu" / admin cấp lại mật khẩu cho học viên
 - [ ] Nối trang công khai và app quản lý lại thành 1 trải nghiệm liền mạch (nút "Đăng nhập" trỏ đúng sang app)
 - [ ] Triển khai demo: trang công khai lên Netlify, backend/app quản lý lên Render hoặc Railway khi cần
 - [ ] Mua domain thật (.vn hoặc .com) khi ra mắt chính thức

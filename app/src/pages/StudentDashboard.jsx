@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../lib/AuthContext";
 import { supabase } from "../lib/supabaseClient";
+import ChangePasswordForm from "../components/ChangePasswordForm";
 
 const DAYS = [
   { value: 1, label: "Thứ 2" },
@@ -18,6 +19,7 @@ const TABS = [
   { key: "materials", label: "Tài liệu" },
   { key: "attendance", label: "Điểm danh" },
   { key: "messages", label: "Hộp thư" },
+  { key: "account", label: "Tài khoản" },
 ];
 
 function formatTime(t) {
@@ -346,6 +348,13 @@ export default function StudentDashboard() {
                     <button className="btn-primary" type="submit" disabled={sending}>Gửi</button>
                   </form>
                 </div>
+              </div>
+            )}
+
+            {activeTab === "account" && (
+              <div>
+                <h2 style={{ fontSize: "1.05rem", color: "var(--navy)" }}>Đổi mật khẩu</h2>
+                <ChangePasswordForm />
               </div>
             )}
           </>

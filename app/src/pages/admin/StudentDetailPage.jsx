@@ -34,6 +34,10 @@ export default function StudentDetailPage() {
 
   const [activeTab, setActiveTab] = useState("payments");
 
+  const [resetting, setResetting] = useState(false);
+  const [resetPassword, setResetPassword] = useState(null);
+  const [resetError, setResetError] = useState("");
+
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [paymentForm, setPaymentForm] = useState(EMPTY_PAYMENT_FORM);
   const [paymentError, setPaymentError] = useState("");
@@ -157,6 +161,22 @@ export default function StudentDetailPage() {
     else loadAll();
   }
 
+  async function handleResetPassword() {
+    if (!confirm(`Cấp lại mật khẩu mới cho "${student.profiles?.full_name}"? Mật khẩu cũ sẽ không dùng được nữa.`)) return;
+    setResetError("");
+    setResetPassword(null);
+    setResetting(true);
+    const { data, error: invokeError } = await supabase.functions.invoke("reset-student-password", {
+      body: { student_id: studentId },
+    });
+    setResetting(false);
+    if (invokeError || data?.error) {
+      setResetError(data?.error || invokeError.message);
+      return;
+    }
+    setResetPassword(data.password);
+  }
+
   if (loading) return <p className="empty-note">Đang tải...</p>;
   if (!student) return <p className="empty-note">Không tìm thấy học viên.</p>;
 
@@ -169,6 +189,17 @@ export default function StudentDetailPage() {
       <div className="teacher-card">
         <h1>{student.profiles?.full_name}</h1>
         <p>{[student.campus, student.profiles?.phone, student.parent_name].filter(Boolean).join(" · ") || "Chưa có thông tin"}</p>
+        <div className="form-actions" style={{ marginTop: 12 }}>
+          <button className="btn-secondary" onClick={handleResetPassword} disabled={resetting}>
+            {resetting ? "Đang cấp lại..." : "Đặt lại mật khẩu"}
+          </button>
+        </div>
+        {resetError && <p className="field-error">{resetError}</p>}
+        {resetPassword && (
+          <p style={{ marginTop: 10 }}>
+            Mật khẩu mới: <strong>{resetPassword}</strong> — gửi ngay cho phụ huynh, mật khẩu này chỉ hiện 1 lần.
+          </p>
+        )}
       </div>
 
       {error && <p className="field-error">{error}</p>}

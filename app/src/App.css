@@ -106,6 +106,55 @@ body {
 }
 
 .dashboard-body { padding: 24px; max-width: 720px; }
+.dashboard-body.wide { max-width: 960px; }
+
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.tab-bar button {
+  background: none;
+  border: none;
+  padding: 10px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #6b7488;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+}
+.tab-bar button.active { color: var(--navy); border-bottom-color: var(--gold); }
+
+.info-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.info-card strong { display: block; color: var(--ink); }
+.info-card span { display: block; font-size: 0.82rem; color: #6b7488; margin-top: 2px; }
+
+.info-card.unread { border-left: 3px solid var(--gold); }
+
+.summary-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.summary-tile {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  min-width: 160px;
+}
+.summary-tile span { display: block; font-size: 0.78rem; color: #6b7488; margin-bottom: 4px; }
+.summary-tile strong { font-size: 1.3rem; color: var(--navy); font-family: "Inter", sans-serif; }
 
 /* =========================================================
    Admin layout (sidebar + content)

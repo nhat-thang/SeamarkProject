@@ -37,9 +37,10 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 - [ ] Các trang tĩnh còn lại của site công khai: Khoá học, Đội ngũ giáo viên, Học phí, Đánh giá, FAQ, Liên hệ, Đăng nhập (nav đang trỏ tới nhưng các file này chưa được tạo)
 - [x] Admin: ghi danh học viên vào lớp học cụ thể (trong trang Học viên, cột "Lớp đang học")
 - [ ] "Quên mật khẩu" / admin cấp lại mật khẩu cho học viên
-- [ ] Admin: nhắn tin tới học viên — chọn 1 người / nhiều người / tất cả, gửi kèm text, file hoặc ảnh
+- [x] Học viên: giao diện xem thời khoá biểu cá nhân (có dữ liệu thật), tình trạng học phí, tài liệu/bài tập, điểm danh, hộp thư (4 mục sau đang trống vì admin chưa có chỗ nhập — xem 3 mục tiếp theo)
 - [ ] Admin: ghi nhận học phí (chuyển khoản/tiền mặt thủ công) + điểm danh
-- [ ] Học viên: xem thời khoá biểu cá nhân, tình trạng học phí, tài liệu/bài tập, điểm danh, hộp thư
+- [ ] Admin: đăng tài liệu/bài tập theo lớp
+- [ ] Admin: nhắn tin tới học viên — chọn 1 người / nhiều người / tất cả, gửi kèm text, file hoặc ảnh
 - [ ] Nối trang công khai và app quản lý lại thành 1 trải nghiệm liền mạch (nút "Đăng nhập" trỏ đúng sang app)
 - [ ] Triển khai demo: trang công khai lên Netlify, backend/app quản lý lên Render hoặc Railway khi cần
 - [ ] Mua domain thật (.vn hoặc .com) khi ra mắt chính thức

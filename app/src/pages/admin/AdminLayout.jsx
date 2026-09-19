@@ -17,6 +17,7 @@ export default function AdminLayout() {
       <div className="admin-body">
         <nav className="admin-sidebar">
           <NavLink to="/admin" end>Tổng quan</NavLink>
+          <NavLink to="/admin/students">Học viên</NavLink>
           <NavLink to="/admin/teachers">Giáo viên</NavLink>
           <NavLink to="/admin/courses">Khoá học</NavLink>
           <NavLink to="/admin/classes">Lớp học</NavLink>

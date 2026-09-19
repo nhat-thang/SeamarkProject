@@ -30,12 +30,13 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 - [x] Admin: quản lý Khoá học (thêm/sửa/xoá)
 - [x] Admin: quản lý Lớp học, gắn với khoá học (thêm/sửa/xoá)
 - [x] Admin: thời khoá biểu theo tuần cho từng giáo viên — thêm buổi dạy (chọn lớp, giờ, phòng), tự động cảnh báo nếu trùng giờ
+- [x] Admin: danh sách đăng ký tư vấn (chờ xác nhận) → xác nhận → tự tạo tài khoản học viên qua Supabase Edge Function (`create-student-account`), có nút thêm học viên thủ công (khách đăng ký ngoài đời/qua điện thoại)
 
 ## Đang làm / sắp tới
 
 - [ ] Các trang tĩnh còn lại của site công khai: Khoá học, Đội ngũ giáo viên, Học phí, Đánh giá, FAQ, Liên hệ, Đăng nhập (nav đang trỏ tới nhưng các file này chưa được tạo)
-- [ ] Admin: danh sách đăng ký tư vấn → xác nhận → tự tạo tài khoản học viên (cần dựng thêm 1 Supabase Edge Function vì việc tạo tài khoản không thể làm an toàn trực tiếp từ trình duyệt)
-- [ ] Admin: quản lý học viên (hồ sơ, ghi danh vào lớp)
+- [ ] Admin: ghi danh học viên vào lớp học cụ thể (bảng `enrollments`) — cần làm trước để tài liệu/điểm danh/lịch cá nhân của học viên hiển thị đúng
+- [ ] "Quên mật khẩu" / admin cấp lại mật khẩu cho học viên
 - [ ] Admin: nhắn tin tới học viên — chọn 1 người / nhiều người / tất cả, gửi kèm text, file hoặc ảnh
 - [ ] Admin: ghi nhận học phí (chuyển khoản/tiền mặt thủ công) + điểm danh
 - [ ] Học viên: xem thời khoá biểu cá nhân, tình trạng học phí, tài liệu/bài tập, điểm danh, hộp thư

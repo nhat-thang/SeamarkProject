@@ -4,8 +4,9 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 
 ## Cách chạy thử ở máy này
 
-1. **Trang giới thiệu công khai (tĩnh):** mở terminal tại thư mục gốc dự án, chạy:
+1. **Trang giới thiệu công khai (tĩnh):** nằm trong thư mục `public-site/` (tách riêng để khi deploy Netlify không lộ code app/SQL ra ngoài). Mở terminal tại thư mục đó, chạy:
    ```
+   cd public-site
    python -m http.server 8000
    ```
    rồi mở http://localhost:8000

@@ -2,7 +2,13 @@
 
 Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 
-## Cách chạy thử ở máy này
+**Link demo đã triển khai (Netlify):**
+- Trang công khai: https://silver-vacherin-58ae02.netlify.app
+- App quản lý/học viên: https://astonishing-faloodeh-46348e.netlify.app
+
+Cả 2 site tự động cập nhật mỗi khi có commit mới được push lên nhánh `main`.
+
+## Cách chạy thử ở máy này (khi cần code/debug)
 
 1. **Trang giới thiệu công khai (tĩnh):** nằm trong thư mục `public-site/` (tách riêng để khi deploy Netlify không lộ code app/SQL ra ngoài). Mở terminal tại thư mục đó, chạy:
    ```
@@ -23,7 +29,7 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
    rồi mở http://localhost:5173
    - Cần có file `app/.env` chứa `VITE_SUPABASE_URL` và `VITE_SUPABASE_ANON_KEY` (đã tạo sẵn trên máy này, **không** đẩy lên GitHub vì lý do bảo mật — nếu đổi máy khác cần tạo lại file này, xem mẫu ở `app/.env.example`)
 
-Đây là **2 ứng dụng tách biệt**, chạy 2 server cục bộ song song — trang chủ tĩnh chưa nối được sang app quản lý (xem mục "Đang làm / sắp tới").
+Đây là **2 ứng dụng tách biệt**, chạy 2 server cục bộ song song. Trên bản đã deploy, nút "Đăng nhập" ở trang công khai đã trỏ đúng sang link app thật; khi chạy local, nút đó vẫn trỏ sang link Netlify (không phải localhost:5173) — muốn test app local thì mở thẳng http://localhost:5173.
 
 ## Đã hoàn thành
 
@@ -51,11 +57,15 @@ Repo GitHub: https://github.com/nhat-thang/SeamarkProject
 - [x] 7 trang tĩnh còn lại của site công khai: `khoa-hoc.html` (chi tiết 4 khoá), `giao-vien.html` (6 giáo viên demo), `hoc-phi.html` (bảng giá), `danh-gia.html` (6 đánh giá), `faq.html` (accordion 9 câu hỏi), `lien-he.html`, `dang-nhap.html`
 - [x] `lien-he.html` **đã nối thật với Supabase**: form đăng ký tư vấn ghi thẳng vào bảng `registration_requests` mà admin đang xem trong app — không cần đăng nhập (dùng `@supabase/supabase-js` qua CDN + anon key, không qua React app)
 
+- [x] Triển khai demo lên Netlify — cả trang công khai và app quản lý đều host được trên Netlify (không cần Render/Railway vì backend đã là Supabase):
+  - Trang công khai: https://silver-vacherin-58ae02.netlify.app
+  - App quản lý/học viên: https://astonishing-faloodeh-46348e.netlify.app
+- [x] Nối nút "Đăng nhập" ở trang công khai (`dang-nhap.html`) sang đúng link app thật ở trên (trước đó trỏ nhầm về `localhost`, chỉ chạy được trên máy dev)
+
 ## Đang làm / sắp tới
 
-- [ ] Nối trang công khai và app quản lý lại thành 1 trải nghiệm liền mạch — hiện `dang-nhap.html` đang trỏ tạm sang `http://localhost:5173` (ghi rõ trong file, cần đổi khi có domain thật)
-- [ ] Triển khai demo: trang công khai lên Netlify, backend/app quản lý lên Render hoặc Railway khi cần
-- [ ] Mua domain thật (.vn hoặc .com) khi ra mắt chính thức
+- [ ] Mua domain thật (.vn hoặc .com) khi ra mắt chính thức, trỏ về 2 site Netlify trên
+- [ ] Chatbot AI thật (LLM, không dùng agent) — sẽ thêm qua 1 Supabase Edge Function mới để giữ bí mật API key
 
 ## Thông tin đang dùng tạm — cần chốt lại trước khi ra mắt thật
 
